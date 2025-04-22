@@ -8,6 +8,6 @@
 #SBATCH --mem=16G
 
 module load nextflow
-nextflow run main.nf -profile slurm -resume
+nextflow run qc-align-quant.nf -profile slurm -resume
 
 
