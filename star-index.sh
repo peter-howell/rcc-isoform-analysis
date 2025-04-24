@@ -6,6 +6,8 @@
 #SBATCH -e logs/star-index-%j.err
 #SBATCH -J STAR-INDEX
 
+export PATH="/home/pjhowell/bin:$PATH"
+
 STAR --runThreadN 8 \
      --runMode genomeGenerate \
      --genomeDir star_index \
