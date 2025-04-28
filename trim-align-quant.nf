@@ -42,6 +42,7 @@ process STARAlign {
 
 process StringTie {
     tag "$sample_id"
+    publishDir params.outdir, mode: 'copy'
 
     input:
     tuple val(sample_id), path(bam)
@@ -55,7 +56,7 @@ process StringTie {
     """
     stringtie ${bam} \
         -G ${gtf} \
-        -o ${outdir}/${sample_id}.gtf \
+        -o ${sample_id}.gtf \
         -p ${params.stringtie_cpus}
     """
 }
