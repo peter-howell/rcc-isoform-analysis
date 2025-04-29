@@ -57,7 +57,8 @@ process StringTie {
     stringtie ${bam} \
         -G ${gtf} \
         -o ${sample_id}.gtf \
-        -p ${params.stringtie_cpus}
+        -p ${params.stringtie_cpus} \
+        -e
     """
 }
 
