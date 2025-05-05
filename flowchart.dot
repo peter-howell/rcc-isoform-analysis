@@ -1,0 +1,29 @@
+digraph G {
+
+    "STAR\ngenomeGenerate" [shape=rectangle style=filled]
+    "Trim Galore" [shape=rectangle style=filled]
+    "StringTie" [shape=rectangle style=filled]
+    "STAR\nalign" [shape=rectangle style=filled]
+    
+    
+    "paired fastq files"
+    "reference genome"
+    "reference transcript\nannotations"
+    
+    "reference genome" -> "STAR\ngenomeGenerate"
+    "reference transcript\nannotations" -> "STAR\ngenomeGenerate"
+    
+    "STAR\ngenomeGenerate" -> "STAR index"
+    
+    "paired fastq files" -> "Trim Galore" -> "paired trimmed fastq's"
+    
+    "paired trimmed fastq's" -> "STAR\nalign"
+    "STAR index" -> "STAR\nalign"
+    "STAR\nalign" -> "Sorted aligned BAMs"
+    "Sorted aligned BAMs" -> StringTie
+    "reference transcript\nannotations" -> StringTie
+    
+    StringTie -> "transcript-level\ncount matrix"
+
+}
+
