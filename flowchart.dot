@@ -1,29 +1,31 @@
 digraph G {
 
-    "STAR\ngenomeGenerate" [shape=rectangle style=filled]
-    "Trim Galore" [shape=rectangle style=filled]
-    "StringTie" [shape=rectangle style=filled]
-    "STAR\nalign" [shape=rectangle style=filled]
-    
+    "STAR\nindex" [shape=rectangle style=filled fillcolor=lightblue]
+    "Trim Galore" [shape=rectangle style=filled fillcolor=lightblue]
+    "StringTie" [shape=rectangle style=filled fillcolor=lightblue]
+    "STAR\nalign" [shape=rectangle style=filled fillcolor=lightblue]
+    "DESeq2" [shape=rectangle style=filled fillcolor=lightblue]
     
     "paired fastq files"
     "reference genome"
     "reference transcript\nannotations"
     
-    "reference genome" -> "STAR\ngenomeGenerate"
-    "reference transcript\nannotations" -> "STAR\ngenomeGenerate"
+    "reference genome" -> "STAR\nindex"
+    "reference transcript\nannotations" -> "STAR\nindex"
     
-    "STAR\ngenomeGenerate" -> "STAR index"
+    "STAR\nindex" -> "index"
     
     "paired fastq files" -> "Trim Galore" -> "paired trimmed fastq's"
     
     "paired trimmed fastq's" -> "STAR\nalign"
-    "STAR index" -> "STAR\nalign"
+    "index" -> "STAR\nalign"
     "STAR\nalign" -> "Sorted aligned BAMs"
     "Sorted aligned BAMs" -> StringTie
     "reference transcript\nannotations" -> StringTie
     
     StringTie -> "transcript-level\ncount matrix"
+    "transcript-level\ncount matrix" -> DESeq2
+    DESeq2 -> "differentially expressed\ntranscripts"
 
 }
 
