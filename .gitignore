@@ -1,4 +1,6 @@
 data/
 star_index/
 qc/
-
+.Rproj
+.Rproj.user
+.Rhistory
