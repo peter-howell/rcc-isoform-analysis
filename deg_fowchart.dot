@@ -1,0 +1,28 @@
+digraph G {
+
+    "enrichGo" [shape=rectangle style=filled fillcolor=lightblue]
+    "enrichR" [shape=rectangle style=filled fillcolor=lightblue]
+    "DESeq2" [shape=rectangle style=filled fillcolor=lightblue]
+    
+    "SRA"
+    "GSEMatrix"
+    "RSEM count matrix"
+    
+    "NCBI literature\n review"
+    "Gene ontology"
+    "Pathway enrichment"
+    
+    "SRA" -> "RSEM count matrix"
+    "SRA" -> "GSEMatrix"
+    
+    "GSEMatrix" -> DESeq2
+    "RSEM count matrix" -> DESeq2
+    
+    DESeq2 -> "differentially expressed\ngenes"
+    "differentially expressed\ngenes" -> enrichGo
+    enrichGo ->  "Gene ontology"
+    "differentially expressed\ngenes" -> enrichR
+    enrichR -> "Pathway enrichment"
+    "differentially expressed\ngenes" -> "NCBI literature\n review"
+
+}
