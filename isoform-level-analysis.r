@@ -50,19 +50,20 @@ library(DESeq2)
 dds <- DESeqDataSetFromMatrix(countData = cts,
                               colData = coldata,
                               design = ~ condition)
-dds <- DESeq(dds)
-
-res <- results(dds)
+dds <- DESeq(dds, BPPARAM = BiocParallel::MulticoreParam())
+res <- results(dds, alpha = 0.05)
 summary(res)
+# res <- res[!is.na(res$padj),]
 
 # General Analysis & Visualization ####
 resOrdered <- res[order(res$pvalue),]
 head(resOrdered, 10)
 
 res05 <- results(dds, alpha=0.05)
+res05 <- res05[res05$padj < 0.05 & !is.na(res05$padj),]
+write.csv(res05, "results/top-transcripts-results.csv")
+
 summary(res05)
-sum(res05$padj < 0.05, na.rm=TRUE)
-# 439
 
 ## MA and Count Plots ####
 plotMA(res, ylim=c(-3,3))
@@ -139,4 +140,33 @@ res[pdl1,]
 fosl1 <- c("ENST00000312562.7","ENST00000448083.6","ENST00000531493.5","ENST00000532401.1","ENST00000534222.1")
 res[fosl1,]
 
+ctla4 <- c("ENST00000696479.1","ENST00000696049.1","ENST00000650075.1","ENST00000648405.2","ENST00000487393.1","ENST00000427473.3","ENST00000295854.10")
+res[ctla4,]
 
+df <- head(as.data.frame(resOrdered),20)
+ids <- data.frame(transcript_id=rownames(df))
+write.table(df, 'results/top-DE-transcripts.txt',quote=FALSE,row.names=FALSE,col.names=FALSE,sep="\t")
+
+df2 <- read.table("results/top-de-isoform-info.txt",header=TRUE,sep="\t", na.strings = TRUE)
+names(df2) <- gsub(".", " ",names(df2),fixed=TRUE)
+df2 <- df2[match(rownames(df), df2$`Transcript stable ID version`),]
+
+df3 <- data.frame(transcript_id=rownames(df), gene_id=df2$`Gene stable ID`, gene_name=df2$`Gene name`, gene_type = df2$`Gene type`, canonical=!is.na(df2$`Ensembl Canonical`), lfc=df$log2FoldChange, padj=df$padj)
+write.table(df3, 'results/top-DE-summary.txt',quote=FALSE,row.names=FALSE,col.names=TRUE,sep="\t")
+
+
+
+topid <- rownames(res05)
+
+write.table(data.frame(topid), 'results/top005-transcript-ids.txt',quote=FALSE,row.names=FALSE,col.names=FALSE,sep="\t")
+
+library(data.table)
+dt <- fread("results/gene-and-transcripts.txt")
+dt2 <- dt[, .N, by=`Gene stable ID`]
+dt3 <- dt2[N > 1]
+genes <- dt3$`Gene stable ID`
+dt4 <- dt[`Gene stable ID` %in% genes, .(`Transcript stable ID version`, `Gene stable ID`)]
+
+dt4$log2FoldChange <- res[dt4$`Transcript stable ID version`,"log2FoldChange"]
+dt4$padj <- res[dt4$`Transcript stable ID version`,"padj"]
+dt4
